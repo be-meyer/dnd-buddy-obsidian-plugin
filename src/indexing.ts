@@ -1,4 +1,4 @@
-import { App, Notice, TFile } from 'obsidian';
+import { App, Notice } from 'obsidian';
 import { ApiClient } from './api';
 
 export class IndexingManager {
@@ -25,12 +25,10 @@ export class IndexingManager {
 			new Notice(`Indexing: ${activeFile.name}`);
 			
 			const content = await this.app.vault.read(activeFile);
-			const category = this.detectCategory(activeFile.path);
 			
 			const requestBody = {
 				campaign: this.campaign,
-				category,
-				filename: activeFile.name,
+				filePath: activeFile.path,
 				content
 			};
 			
@@ -70,12 +68,10 @@ export class IndexingManager {
 					new Notice(`Indexing: ${file.name}`, 2000);
 					
 					const content = await this.app.vault.read(file);
-					const category = this.detectCategory(file.path);
 					
 					const requestBody = {
 						campaign: this.campaign,
-						category,
-						filename: file.name,
+						filePath: file.path,
 						content
 					};
 					
@@ -104,31 +100,5 @@ export class IndexingManager {
 		} catch (error) {
 			new Notice(`Failed to reindex vault: ${error.message}`);
 		}
-	}
-
-	private detectCategory(path: string): string {
-		const pathParts = path.split('/');
-		
-		// Folder name to category mapping (case-insensitive)
-		const folderMapping: { [key: string]: string } = {
-			'npcs': 'npcs',
-			'monsters': 'monsters',
-			'sessions': 'sessions',
-			'organizations': 'organizations',
-			'lore': 'lore',
-			'species': 'species',
-			'players': 'players'
-		};
-		
-		// Check each path part against the mapping
-		for (const part of pathParts) {
-			const lowerPart = part.toLowerCase();
-			if (folderMapping[lowerPart]) {
-				return folderMapping[lowerPart];
-			}
-		}
-		
-		// Default to 'lore' if no mapping found
-		return 'lore';
 	}
 }
