@@ -6,7 +6,6 @@ export interface PluginSettings {
 	region: string;
 	apiEndpoint: string;
 	websocketEndpoint: string;
-	campaign: string;
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -14,8 +13,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	clientId: '',
 	region: 'eu-central-1',
 	apiEndpoint: '',
-	websocketEndpoint: '',
-	campaign: 'default'
+	websocketEndpoint: ''
 }
 
 export interface SessionData {

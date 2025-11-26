@@ -72,15 +72,9 @@ export class SettingTab extends PluginSettingTab {
 
 		containerEl.createEl('h2', { text: 'Campaign Settings' });
 
-		new Setting(containerEl)
-			.setName('Campaign Name')
-			.setDesc('Your campaign name (User ID is automatically retrieved from Cognito)')
-			.addText(text => text
-				.setPlaceholder('default')
-				.setValue(this.plugin.settings.campaign)
-				.onChange(async (value) => {
-					this.plugin.settings.campaign = value;
-					await this.plugin.saveSettings();
-				}));
+		containerEl.createEl('p', { 
+			text: 'Campaign name is automatically set to your vault name.',
+			cls: 'setting-item-description'
+		});
 	}
 }

@@ -246,7 +246,7 @@ export class SimpleSidebarView extends ItemView {
 		this.indexingManager = new IndexingManager(
 			this.app,
 			this.apiClient,
-			this.plugin.settings.campaign
+			this.app.vault.getName()
 		);
 
 		this.sessionManager = new SessionManager(
@@ -353,11 +353,6 @@ export class SimpleSidebarView extends ItemView {
 		const message = input.value.trim();
 		if (!message) return;
 
-		if (!this.plugin.settings.campaign) {
-			new Notice('Please configure campaign in settings');
-			return;
-		}
-
 		if (!this.wsManager?.isConnected()) {
 			new Notice('Not connected to server. Please wait or reconnect.');
 			return;
@@ -376,7 +371,7 @@ export class SimpleSidebarView extends ItemView {
 
 		const wsMessage = {
 			action: 'chat',
-			campaign: this.plugin.settings.campaign,
+			campaign: this.app.vault.getName(),
 			message: message,
 			sessionId: this.sessionId
 		};
