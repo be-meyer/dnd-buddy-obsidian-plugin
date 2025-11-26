@@ -1,6 +1,6 @@
 import { ItemView, Notice, WorkspaceLeaf, MarkdownRenderer, Plugin } from 'obsidian';
 import { VIEW_TYPE_SIDEBAR, AuthContext, WebSocketMessage, PluginSettings } from './types';
-import { authenticateUser, completePasswordChange, checkExistingSession, generateSessionId, signOut, getCurrentUsername, getValidIdToken } from './auth';
+import { authenticateUser, completePasswordChange, checkExistingSession, generateSessionId, signOut } from './auth';
 import { WebSocketManager, ConnectionStatus } from './websocket';
 import { ApiClient } from './api';
 import { IndexingManager } from './indexing';
@@ -447,6 +447,9 @@ export class SimpleSidebarView extends ItemView {
 		this.currentStreamingContent = null;
 		this.currentLoadingMessage = null;
 		this.currentStreamingText = '';
+		
+		// Clear pending message to prevent resending on reconnect
+		this.wsManager?.clearPendingMessage();
 	}
 
 	private handleErrorMessage(message: WebSocketMessage) {
@@ -466,6 +469,9 @@ export class SimpleSidebarView extends ItemView {
 		createErrorMessage(this.chatOutputEl!, errorText);
 		this.chatOutputEl!.scrollTop = this.chatOutputEl!.scrollHeight;
 		new Notice(`Error: ${errorText}`);
+		
+		// Clear pending message to prevent resending on reconnect
+		this.wsManager?.clearPendingMessage();
 	}
 
 	private updateConnectionStatus(status: ConnectionStatus) {
