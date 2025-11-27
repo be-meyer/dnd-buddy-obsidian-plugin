@@ -215,7 +215,7 @@ export class SimpleSidebarView extends ItemView {
 
 		const buttonContainer = container.createEl('div');
 		buttonContainer.style.display = 'flex';
-		buttonContainer.style.justifyContent = 'space-between';
+		buttonContainer.style.flexWrap = 'wrap';
 		buttonContainer.style.marginBottom = '10px';
 		buttonContainer.style.gap = '5px';
 
@@ -336,13 +336,17 @@ export class SimpleSidebarView extends ItemView {
 			}
 		);
 
-		const loadButton = createIconButton(
+		// Spacer to push remaining buttons to the right
+		const spacer = buttonContainer.createEl('div');
+		spacer.style.flex = '1';
+		spacer.style.minWidth = '10px';
+
+		createIconButton(
 			buttonContainer,
 			'history',
 			'Load previous session',
 			() => this.sessionManager!.showSessionList(container, (sessionId) => this.loadSession(sessionId))
 		);
-		loadButton.style.marginLeft = 'auto';
 
 		createIconButton(
 			buttonContainer,
