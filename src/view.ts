@@ -46,13 +46,7 @@ export class SimpleSidebarView extends ItemView {
 	async onOpen() {
 		const container = this.containerEl.children[1];
 		container.empty();
-		container.addClass('simple-sidebar-view');
-
-		(container as HTMLElement).style.display = 'flex';
-		(container as HTMLElement).style.flexDirection = 'column';
-		(container as HTMLElement).style.height = '100%';
-		(container as HTMLElement).style.padding = '10px';
-		(container as HTMLElement).style.paddingBottom = '45px';
+		container.addClass('dnd-buddy-container');
 
 		if (!this.plugin.settings.userPoolId || !this.plugin.settings.clientId) {
 			container.createEl('p', { text: 'Please configure Cognito settings in plugin settings.' });
@@ -78,31 +72,22 @@ export class SimpleSidebarView extends ItemView {
 		container.empty();
 
 		const loginContainer = container.createEl('div');
-		loginContainer.style.padding = '20px';
+		loginContainer.addClass('dnd-buddy-form-container');
 
 		loginContainer.createEl('h3', { text: 'Login to Cognito' });
 
 		const usernameInput = loginContainer.createEl('input');
 		usernameInput.type = 'text';
 		usernameInput.placeholder = 'Username';
-		usernameInput.style.width = '100%';
-		usernameInput.style.padding = '8px';
-		usernameInput.style.marginBottom = '10px';
-		usernameInput.style.borderRadius = '5px';
+		usernameInput.addClass('dnd-buddy-input');
 
 		const passwordInput = loginContainer.createEl('input');
 		passwordInput.type = 'password';
 		passwordInput.placeholder = 'Password';
-		passwordInput.style.width = '100%';
-		passwordInput.style.padding = '8px';
-		passwordInput.style.marginBottom = '10px';
-		passwordInput.style.borderRadius = '5px';
+		passwordInput.addClass('dnd-buddy-input');
 
 		const loginButton = loginContainer.createEl('button', { text: 'Login' });
-		loginButton.style.width = '100%';
-		loginButton.style.padding = '10px';
-		loginButton.style.cursor = 'pointer';
-		loginButton.style.borderRadius = '5px';
+		loginButton.addClass('dnd-buddy-form-button');
 
 		const handleLogin = async () => {
 			const username = usernameInput.value.trim();
@@ -141,7 +126,7 @@ export class SimpleSidebarView extends ItemView {
 		container.empty();
 
 		const formContainer = container.createEl('div');
-		formContainer.style.padding = '20px';
+		formContainer.addClass('dnd-buddy-form-container');
 
 		formContainer.createEl('h3', { text: 'Change Password Required' });
 		formContainer.createEl('p', { text: 'You must change your password before continuing.' });
@@ -149,24 +134,15 @@ export class SimpleSidebarView extends ItemView {
 		const newPasswordInput = formContainer.createEl('input');
 		newPasswordInput.type = 'password';
 		newPasswordInput.placeholder = 'New Password';
-		newPasswordInput.style.width = '100%';
-		newPasswordInput.style.padding = '8px';
-		newPasswordInput.style.marginBottom = '10px';
-		newPasswordInput.style.borderRadius = '5px';
+		newPasswordInput.addClass('dnd-buddy-input');
 
 		const confirmPasswordInput = formContainer.createEl('input');
 		confirmPasswordInput.type = 'password';
 		confirmPasswordInput.placeholder = 'Confirm New Password';
-		confirmPasswordInput.style.width = '100%';
-		confirmPasswordInput.style.padding = '8px';
-		confirmPasswordInput.style.marginBottom = '10px';
-		confirmPasswordInput.style.borderRadius = '5px';
+		confirmPasswordInput.addClass('dnd-buddy-input');
 
 		const changeButton = formContainer.createEl('button', { text: 'Change Password' });
-		changeButton.style.width = '100%';
-		changeButton.style.padding = '10px';
-		changeButton.style.cursor = 'pointer';
-		changeButton.style.borderRadius = '5px';
+		changeButton.addClass('dnd-buddy-form-button');
 
 		const handlePasswordChange = async () => {
 			const newPassword = newPasswordInput.value.trim();
@@ -214,22 +190,12 @@ export class SimpleSidebarView extends ItemView {
 		this.initializeManagers();
 
 		const buttonContainer = container.createEl('div');
-		buttonContainer.style.display = 'flex';
-		buttonContainer.style.flexWrap = 'wrap';
-		buttonContainer.style.marginBottom = '10px';
-		buttonContainer.style.gap = '5px';
+		buttonContainer.addClass('dnd-buddy-toolbar');
 
 		this.createToolbarButtons(buttonContainer, container);
 
 		this.chatOutputEl = container.createEl('div');
-		this.chatOutputEl.style.flex = '1';
-		this.chatOutputEl.style.overflowY = 'auto';
-		this.chatOutputEl.style.border = '1px solid var(--background-modifier-border)';
-		this.chatOutputEl.style.padding = '10px';
-		this.chatOutputEl.style.marginBottom = '10px';
-		this.chatOutputEl.style.borderRadius = '5px';
-		this.chatOutputEl.style.userSelect = 'text';
-		this.chatOutputEl.style.cursor = 'text';
+		this.chatOutputEl.addClass('dnd-buddy-chat-output');
 
 		this.createInputArea(container);
 
@@ -338,8 +304,7 @@ export class SimpleSidebarView extends ItemView {
 
 		// Spacer to push remaining buttons to the right
 		const spacer = buttonContainer.createEl('div');
-		spacer.style.flex = '1';
-		spacer.style.minWidth = '10px';
+		spacer.addClass('dnd-buddy-spacer');
 
 		createIconButton(
 			buttonContainer,
@@ -377,20 +342,11 @@ export class SimpleSidebarView extends ItemView {
 
 	private createInputArea(container: Element) {
 		const inputContainer = container.createEl('div');
-		inputContainer.style.display = 'flex';
-		inputContainer.style.gap = '5px';
-		inputContainer.style.alignItems = 'flex-end';
+		inputContainer.addClass('dnd-buddy-input-container');
 
 		const textarea = inputContainer.createEl('textarea');
 		textarea.placeholder = 'Type a message...';
-		textarea.style.flex = '1';
-		textarea.style.padding = '8px';
-		textarea.style.borderRadius = '5px';
-		textarea.style.resize = 'none';
-		textarea.style.minHeight = '36px';
-		textarea.style.maxHeight = '150px';
-		textarea.style.overflowY = 'auto';
-		textarea.style.lineHeight = '1.4';
+		textarea.addClass('dnd-buddy-textarea');
 		textarea.rows = 1;
 
 		// Auto-grow textarea

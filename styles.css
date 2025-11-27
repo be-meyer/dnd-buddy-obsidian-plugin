@@ -1,8 +1,149 @@
-/*
+/* Buttons */
+.dnd-buddy-button {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	cursor: pointer;
+	border-radius: 5px;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.dnd-buddy-icon-button {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 10px;
+	cursor: pointer;
+	border-radius: 5px;
+}
 
-If your plugin does not need CSS, delete this file.
+/* Message frames */
+.dnd-buddy-message {
+	margin-bottom: 12px;
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid var(--background-modifier-border);
+	max-width: 85%;
+	user-select: text;
+	cursor: text;
+}
 
-*/
+.dnd-buddy-message-user {
+	background-color: var(--background-secondary);
+	margin-left: auto;
+}
+
+.dnd-buddy-message-agent {
+	background-color: var(--background-primary-alt);
+}
+
+.dnd-buddy-message-error {
+	border: 1px solid var(--color-red);
+}
+
+/* Message header */
+.dnd-buddy-message-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 4px;
+	gap: 8px;
+}
+
+.dnd-buddy-message-label {
+	font-size: 0.85em;
+	font-weight: bold;
+}
+
+.dnd-buddy-message-label-user {
+	color: var(--text-muted);
+}
+
+.dnd-buddy-message-label-agent {
+	color: var(--text-accent);
+}
+
+.dnd-buddy-message-time {
+	font-size: 0.75em;
+	color: var(--text-faint);
+}
+
+/* Message content */
+.dnd-buddy-message-content {
+	color: var(--text-normal);
+	user-select: text;
+}
+
+.dnd-buddy-message-content-error {
+	color: var(--text-error);
+}
+
+/* Container layouts */
+.dnd-buddy-container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 10px;
+	padding-bottom: 45px;
+}
+
+.dnd-buddy-form-container {
+	padding: 20px;
+}
+
+.dnd-buddy-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 10px;
+	gap: 5px;
+}
+
+.dnd-buddy-spacer {
+	flex: 1;
+	min-width: 10px;
+}
+
+/* Chat output */
+.dnd-buddy-chat-output {
+	flex: 1;
+	overflow-y: auto;
+	border: 1px solid var(--background-modifier-border);
+	padding: 10px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	user-select: text;
+	cursor: text;
+}
+
+/* Input area */
+.dnd-buddy-input-container {
+	display: flex;
+	gap: 5px;
+	align-items: flex-end;
+}
+
+.dnd-buddy-textarea {
+	flex: 1;
+	padding: 8px;
+	border-radius: 5px;
+	resize: none;
+	min-height: 36px;
+	max-height: 150px;
+	overflow-y: auto;
+	line-height: 1.4;
+}
+
+/* Form inputs */
+.dnd-buddy-input {
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+}
+
+.dnd-buddy-form-button {
+	width: 100%;
+	padding: 10px;
+	cursor: pointer;
+	border-radius: 5px;
+}

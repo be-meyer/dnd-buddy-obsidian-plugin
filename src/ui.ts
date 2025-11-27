@@ -10,12 +10,7 @@ export function createButton(
 	onClick: () => void
 ): HTMLElement {
 	const button = container.createEl('button');
-	button.style.display = 'flex';
-	button.style.alignItems = 'center';
-	button.style.gap = '6px';
-	button.style.padding = '6px 12px';
-	button.style.cursor = 'pointer';
-	button.style.borderRadius = '5px';
+	button.addClass('dnd-buddy-button');
 	button.title = title;
 	setIcon(button, icon);
 	if (text) {
@@ -32,12 +27,7 @@ export function createIconButton(
 	onClick: () => void
 ): HTMLElement {
 	const button = container.createEl('button');
-	button.style.display = 'flex';
-	button.style.alignItems = 'center';
-	button.style.gap = '6px';
-	button.style.padding = '6px 10px';
-	button.style.cursor = 'pointer';
-	button.style.borderRadius = '5px';
+	button.addClass('dnd-buddy-icon-button');
 	button.title = title;
 	setIcon(button, icon);
 	button.addEventListener('click', onClick);
@@ -50,34 +40,22 @@ export function createMessageFrame(
 	isUser: boolean
 ): { frame: HTMLElement; content: HTMLElement } {
 	const frame = container.createEl('div');
-	frame.style.marginBottom = '12px';
-	frame.style.padding = '10px';
-	frame.style.borderRadius = '8px';
-	frame.style.backgroundColor = isUser ? 'var(--background-secondary)' : 'var(--background-primary-alt)';
-	frame.style.border = '1px solid var(--background-modifier-border)';
-	frame.style.maxWidth = '85%';
-	frame.style.userSelect = 'text';
-	frame.style.cursor = 'text';
+	frame.addClass('dnd-buddy-message');
+	frame.addClass(isUser ? 'dnd-buddy-message-user' : 'dnd-buddy-message-agent');
 	
-	if (isUser) {
-		frame.style.marginLeft = 'auto';
-	}
+	const headerEl = frame.createEl('div');
+	headerEl.addClass('dnd-buddy-message-header');
 	
-	const labelEl = frame.createEl('div', { text: label });
-	labelEl.style.fontSize = '0.85em';
-	labelEl.style.fontWeight = 'bold';
-	labelEl.style.marginBottom = '4px';
-	labelEl.style.color = isUser ? 'var(--text-muted)' : 'var(--text-accent)';
+	const labelEl = headerEl.createEl('div', { text: label });
+	labelEl.addClass('dnd-buddy-message-label');
+	labelEl.addClass(isUser ? 'dnd-buddy-message-label-user' : 'dnd-buddy-message-label-agent');
+	
+	const timeEl = headerEl.createEl('div');
+	timeEl.addClass('dnd-buddy-message-time');
+	timeEl.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 	
 	const content = frame.createEl('div');
-	content.style.color = 'var(--text-normal)';
-	content.style.userSelect = 'text';
-	
-	// Only apply whitespace styling for user messages to preserve newlines
-	if (isUser) {
-		content.style.whiteSpace = 'pre-wrap';
-		content.style.wordBreak = 'break-word';
-	}
+	content.addClass('dnd-buddy-message-content');
 	
 	return { frame, content };
 }
@@ -87,8 +65,8 @@ export function createErrorMessage(
 	errorText: string
 ): void {
 	const { frame, content } = createMessageFrame(container, 'Error', false);
-	frame.style.border = '1px solid var(--color-red)';
-	content.style.color = 'var(--text-error)';
+	frame.addClass('dnd-buddy-message-error');
+	content.addClass('dnd-buddy-message-content-error');
 	content.textContent = errorText;
 }
 
