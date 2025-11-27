@@ -1,4 +1,4 @@
-import { App, Notice, Component } from 'obsidian';
+import { App, Notice, Component, MarkdownRenderer } from 'obsidian';
 import { ApiClient } from './api';
 import { SessionData } from './types';
 import { renderMarkdownMessage } from './ui';
@@ -78,12 +78,7 @@ export class SessionManager {
 		onSessionLoad: (sessionId: string) => void
 	): void {
 		const sessionItem = container.createEl('div');
-		sessionItem.style.padding = '15px';
-		sessionItem.style.border = '1px solid var(--background-modifier-border)';
-		sessionItem.style.borderRadius = '8px';
-		sessionItem.style.cursor = 'pointer';
-		sessionItem.style.backgroundColor = 'var(--background-secondary)';
-		sessionItem.style.transition = 'background-color 0.2s';
+		sessionItem.addClass('dnd-buddy-session-item');
 		
 		sessionItem.addEventListener('mouseenter', () => {
 			sessionItem.style.backgroundColor = 'var(--background-modifier-hover)';
@@ -101,21 +96,28 @@ export class SessionManager {
 		const sessionInfo = sessionItem.createEl('div');
 		
 		const sessionDate = sessionInfo.createEl('div');
-		sessionDate.style.fontSize = '0.9em';
-		sessionDate.style.color = 'var(--text-muted)';
-		sessionDate.style.marginBottom = '5px';
+		sessionDate.addClass('dnd-buddy-session-date');
 		sessionDate.textContent = session.lastUpdated 
 			? new Date(session.lastUpdated).toLocaleString() 
 			: 'Unknown date';
 		
 		const sessionPreview = sessionInfo.createEl('div');
-		sessionPreview.style.fontSize = '0.95em';
-		sessionPreview.textContent = session.preview || 'No preview';
+		sessionPreview.addClass('dnd-buddy-session-preview');
+		
+		if (session.preview) {
+			MarkdownRenderer.render(
+				this.app,
+				session.preview,
+				sessionPreview,
+				'',
+				this.component
+			);
+		} else {
+			sessionPreview.textContent = 'No preview';
+		}
 		
 		const sessionMeta = sessionInfo.createEl('div');
-		sessionMeta.style.fontSize = '0.85em';
-		sessionMeta.style.color = 'var(--text-muted)';
-		sessionMeta.style.marginTop = '5px';
+		sessionMeta.addClass('dnd-buddy-session-meta');
 		sessionMeta.textContent = `${session.messageCount} messages`;
 	}
 

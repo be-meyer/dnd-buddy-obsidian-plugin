@@ -147,3 +147,45 @@
 	cursor: pointer;
 	border-radius: 5px;
 }
+
+
+/* Session list */
+.dnd-buddy-session-item {
+	padding: 15px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	cursor: pointer;
+	background-color: var(--background-secondary);
+	transition: background-color 0.2s;
+}
+
+.dnd-buddy-session-date {
+	font-size: 0.9em;
+	color: var(--text-muted);
+	margin-bottom: 8px;
+}
+
+.dnd-buddy-session-preview {
+	font-size: 0.95em;
+	max-height: 250px;
+	overflow: hidden;
+	position: relative;
+	padding-bottom: 5px;
+}
+
+.dnd-buddy-session-preview::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 30px;
+	background: linear-gradient(transparent, var(--background-secondary));
+	pointer-events: none;
+}
+
+.dnd-buddy-session-meta {
+	font-size: 0.85em;
+	color: var(--text-muted);
+	margin-top: 8px;
+}
