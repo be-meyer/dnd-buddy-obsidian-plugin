@@ -40,7 +40,7 @@ export class SimpleSidebarView extends ItemView {
 	}
 
 	getIcon() {
-		return 'bug';
+		return 'bot-message-square';
 	}
 
 	async onOpen() {
