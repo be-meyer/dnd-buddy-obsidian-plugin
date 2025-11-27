@@ -1,4 +1,4 @@
-export const VIEW_TYPE_SIDEBAR = 'simple-sidebar-view';
+export const VIEW_TYPE_SIDEBAR = 'dnd-buddy-view';
 
 export interface PluginSettings {
 	userPoolId: string;

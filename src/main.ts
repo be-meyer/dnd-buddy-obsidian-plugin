@@ -27,7 +27,11 @@ export default class SimpleSidebarPlugin extends Plugin {
 		});
 
 		this.addSettingTab(new SettingTab(this.app, this));
-		await this.activateView();
+		
+		// Wait for layout to be ready before activating view
+		this.app.workspace.onLayoutReady(() => {
+			this.activateView();
+		});
 	}
 
 	async activateView() {

@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Plugin } from 'obsidian';
+import { App, PluginSettingTab, Setting, Plugin, Notice } from 'obsidian';
 import { PluginSettings } from './types';
 
 export class SettingTab extends PluginSettingTab {
@@ -24,6 +24,7 @@ export class SettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.userPoolId = value;
 					await this.plugin.saveSettings();
+					this.notifySettingsChanged();
 				}));
 
 		new Setting(containerEl)
@@ -35,6 +36,7 @@ export class SettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.clientId = value;
 					await this.plugin.saveSettings();
+					this.notifySettingsChanged();
 				}));
 
 		new Setting(containerEl)
@@ -46,6 +48,7 @@ export class SettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.region = value;
 					await this.plugin.saveSettings();
+					this.notifySettingsChanged();
 				}));
 
 		new Setting(containerEl)
@@ -57,6 +60,7 @@ export class SettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.apiEndpoint = value;
 					await this.plugin.saveSettings();
+					this.notifySettingsChanged();
 				}));
 
 		new Setting(containerEl)
@@ -68,6 +72,7 @@ export class SettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.websocketEndpoint = value;
 					await this.plugin.saveSettings();
+					this.notifySettingsChanged();
 				}));
 
 		containerEl.createEl('h2', { text: 'Campaign Settings' });
@@ -76,5 +81,22 @@ export class SettingTab extends PluginSettingTab {
 			text: 'Campaign name is automatically set to your vault name.',
 			cls: 'setting-item-description'
 		});
+	}
+
+	private notifySettingsChanged() {
+		// Find the active DnD Buddy view and notify it
+		const leaves = this.app.workspace.getLeavesOfType('dnd-buddy-view');
+		let notified = false;
+		leaves.forEach(leaf => {
+			const view = leaf.view as any;
+			if (view && typeof view.handleSettingsChanged === 'function') {
+				view.handleSettingsChanged();
+				notified = true;
+			}
+		});
+		
+		if (!notified) {
+			new Notice('Settings saved');
+		}
 	}
 }

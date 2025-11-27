@@ -113,9 +113,14 @@ export class WebSocketManager {
 
 	disconnect(): void {
 		if (this.ws) {
-			this.ws.close(1000, 'User logout');
+			// Remove event handlers to prevent status updates during intentional disconnect
+			this.ws.onclose = null;
+			this.ws.onerror = null;
+			this.ws.close(1000, 'User disconnect');
 			this.ws = null;
 		}
+		this.reconnectAttempts = 0;
+		this.reconnectDelay = 1000;
 	}
 
 	isConnected(): boolean {

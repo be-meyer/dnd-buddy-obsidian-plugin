@@ -265,6 +265,55 @@ export class SimpleSidebarView extends ItemView {
 		this.wsManager.onStatusChange((status) => this.updateConnectionStatus(status));
 	}
 
+	handleSettingsChanged() {
+		// Disconnect existing WebSocket if connected
+		if (this.wsManager) {
+			this.wsManager.disconnect();
+		}
+
+		// Reinitialize managers with new settings
+		if (this.authContext.idToken && this.chatOutputEl) {
+			// Update API client
+			this.apiClient = new ApiClient(
+				this.plugin.settings.apiEndpoint,
+				this.plugin.settings.clientId,
+				this.plugin.settings.region
+			);
+
+			// Update indexing manager with new API client
+			this.indexingManager = new IndexingManager(
+				this.app,
+				this.apiClient,
+				this.app.vault.getName()
+			);
+
+			// Update session manager with new API client
+			this.sessionManager = new SessionManager(
+				this.app,
+				this.apiClient,
+				this
+			);
+
+			// Create new WebSocket manager with updated settings
+			this.wsManager = new WebSocketManager(
+				this.plugin.settings.websocketEndpoint,
+				this.plugin.settings.clientId,
+				this.plugin.settings.region
+			);
+
+			// Re-register callbacks (sendButtonEl is still valid)
+			this.wsManager.onMessage((data) => this.handleWebSocketMessage(data));
+			this.wsManager.onStatusChange((status) => this.updateConnectionStatus(status));
+
+			// Update status to connecting before we start
+			this.updateConnectionStatus('connecting');
+			
+			// Reconnect
+			this.wsManager.connect();
+			new Notice('Settings updated - reconnecting...');
+		}
+	}
+
 	private createToolbarButtons(buttonContainer: HTMLElement, container: Element) {
 		createButton(
 			buttonContainer,
@@ -326,31 +375,47 @@ export class SimpleSidebarView extends ItemView {
 		const inputContainer = container.createEl('div');
 		inputContainer.style.display = 'flex';
 		inputContainer.style.gap = '5px';
+		inputContainer.style.alignItems = 'flex-end';
 
-		const input = inputContainer.createEl('input');
-		input.type = 'text';
-		input.placeholder = 'Type a message...';
-		input.style.flex = '1';
-		input.style.padding = '8px';
-		input.style.borderRadius = '5px';
+		const textarea = inputContainer.createEl('textarea');
+		textarea.placeholder = 'Type a message...';
+		textarea.style.flex = '1';
+		textarea.style.padding = '8px';
+		textarea.style.borderRadius = '5px';
+		textarea.style.resize = 'none';
+		textarea.style.minHeight = '36px';
+		textarea.style.maxHeight = '150px';
+		textarea.style.overflowY = 'auto';
+		textarea.style.lineHeight = '1.4';
+		textarea.rows = 1;
+
+		// Auto-grow textarea
+		const autoGrow = () => {
+			textarea.style.height = 'auto';
+			textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+		};
+		textarea.addEventListener('input', autoGrow);
 
 		this.sendButtonEl = createButton(
 			inputContainer,
 			'send',
 			'Send',
 			'Send message',
-			() => this.handleSend(input)
+			() => this.handleSendFromTextarea(textarea)
 		);
 
 		this.updateConnectionStatus('connecting');
 
-		input.addEventListener('keypress', (e) => {
-			if (e.key === 'Enter') this.handleSend(input);
+		textarea.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter' && !e.shiftKey) {
+				e.preventDefault();
+				this.handleSendFromTextarea(textarea);
+			}
 		});
 	}
 
-	private async handleSend(input: HTMLInputElement) {
-		const message = input.value.trim();
+	private async handleSendFromTextarea(textarea: HTMLTextAreaElement) {
+		const message = textarea.value.trim();
 		if (!message) return;
 
 		if (!this.wsManager?.isConnected()) {
@@ -360,7 +425,8 @@ export class SimpleSidebarView extends ItemView {
 
 		const { content } = createMessageFrame(this.chatOutputEl!, 'You', true);
 		content.textContent = message;
-		input.value = '';
+		textarea.value = '';
+		textarea.style.height = '36px';
 		this.chatOutputEl!.scrollTop = this.chatOutputEl!.scrollHeight;
 
 		const { frame: loadingMsg, content: loadingText } = createMessageFrame(this.chatOutputEl!, 'Agent', false);

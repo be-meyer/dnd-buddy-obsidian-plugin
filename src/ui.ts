@@ -72,6 +72,8 @@ export function createMessageFrame(
 	const content = frame.createEl('div');
 	content.style.color = 'var(--text-normal)';
 	content.style.userSelect = 'text';
+	content.style.whiteSpace = 'pre-wrap';
+	content.style.wordBreak = 'break-word';
 	
 	return { frame, content };
 }
