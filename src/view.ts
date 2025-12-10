@@ -356,6 +356,13 @@ export class SimpleSidebarView extends ItemView {
 		};
 		textarea.addEventListener('input', autoGrow);
 
+		// Mobile keyboard handling - scroll input into view when focused
+		textarea.addEventListener('focus', () => {
+			setTimeout(() => {
+				inputContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+			}, 300); // Delay to allow keyboard to appear
+		});
+
 		this.sendButtonEl = createButton(
 			inputContainer,
 			'send',

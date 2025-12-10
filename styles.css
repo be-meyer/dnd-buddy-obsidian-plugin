@@ -190,3 +190,24 @@
 	color: var(--text-muted);
 	margin-top: 8px;
 }
+
+
+/* Mobile keyboard handling */
+@media (max-width: 768px) {
+	.dnd-buddy-container {
+		padding-bottom: 20px;
+	}
+	
+	.dnd-buddy-input-container {
+		position: sticky;
+		bottom: 0;
+		background-color: var(--background-primary);
+		padding: 10px 0;
+		margin-bottom: 0;
+	}
+	
+	.dnd-buddy-chat-output {
+		min-height: 200px;
+		margin-bottom: 5px;
+	}
+}
