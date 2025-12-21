@@ -1,11 +1,17 @@
 import { App, Notice } from 'obsidian';
 import { ApiClient } from './api';
 
+export interface StatusBarUpdater {
+	updateStatusBar(text: string): void;
+	clearStatusBar(): void;
+}
+
 export class IndexingManager {
 	constructor(
 		private app: App,
 		private apiClient: ApiClient,
-		private campaign: string
+		private campaign: string,
+		private statusBarUpdater?: StatusBarUpdater
 	) {}
 
 	async indexCurrentFile(): Promise<void> {
@@ -58,15 +64,20 @@ export class IndexingManager {
 				return;
 			}
 
-			new Notice(`Starting to index ${markdownFiles.length} files...`);
+			const totalFiles = markdownFiles.length;
+			new Notice(`Starting to index ${totalFiles} files...`);
 			
 			let successCount = 0;
 			let errorCount = 0;
+			const errors: string[] = [];
 			
-			for (const file of markdownFiles) {
+			for (let i = 0; i < markdownFiles.length; i++) {
+				const file = markdownFiles[i];
+				
+				// Update status bar with progress
+				this.statusBarUpdater?.updateStatusBar(`Indexing ${i + 1}/${totalFiles}`);
+				
 				try {
-					new Notice(`Indexing: ${file.name}`, 2000);
-					
 					const content = await this.app.vault.read(file);
 					
 					const requestBody = {
@@ -79,11 +90,10 @@ export class IndexingManager {
 					
 					if (response) {
 						successCount++;
-						new Notice(`✓ ${file.name} (${response.chunksProcessed} chunks)`, 2000);
 						console.log(`Indexed ${file.name}: ${response.chunksProcessed} chunks`);
 					} else {
 						errorCount++;
-						new Notice(`✗ Failed: ${file.name}`, 3000);
+						errors.push(file.name);
 					}
 					
 					await new Promise(resolve => setTimeout(resolve, 100));
@@ -91,13 +101,23 @@ export class IndexingManager {
 				} catch (error) {
 					console.error(`Failed to index ${file.name}:`, error);
 					errorCount++;
-					new Notice(`✗ Error: ${file.name}`, 3000);
+					errors.push(file.name);
+					new Notice(`✗ Error indexing: ${file.name}`, 3000);
 				}
 			}
 			
-			new Notice(`Indexing complete! Success: ${successCount}, Errors: ${errorCount}`);
+			// Clear status bar
+			this.statusBarUpdater?.clearStatusBar();
+			
+			// Show completion summary
+			if (errorCount === 0) {
+				new Notice(`✓ Indexing complete! ${successCount} files indexed successfully.`);
+			} else {
+				new Notice(`Indexing complete. Success: ${successCount}, Errors: ${errorCount}`);
+			}
 			
 		} catch (error) {
+			this.statusBarUpdater?.clearStatusBar();
 			new Notice(`Failed to reindex vault: ${error.message}`);
 		}
 	}

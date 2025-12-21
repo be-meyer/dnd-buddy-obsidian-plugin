@@ -3,12 +3,12 @@ import { VIEW_TYPE_SIDEBAR, AuthContext, WebSocketMessage, PluginSettings } from
 import { authenticateUser, completePasswordChange, checkExistingSession, generateSessionId, signOut } from './auth';
 import { WebSocketManager, ConnectionStatus } from './websocket';
 import { ApiClient } from './api';
-import { IndexingManager } from './indexing';
+import { IndexingManager, StatusBarUpdater } from './indexing';
 import { SessionManager } from './sessions';
 import { createButton, createIconButton, createMessageFrame, createErrorMessage, extractTextFromContent, updateConnectionStatusUI } from './ui';
 
 export class SimpleSidebarView extends ItemView {
-	plugin: Plugin & { settings: PluginSettings };
+	plugin: Plugin & { settings: PluginSettings } & StatusBarUpdater;
 	authContext: AuthContext = {
 		username: null,
 		idToken: null
@@ -26,7 +26,7 @@ export class SimpleSidebarView extends ItemView {
 	currentLoadingMessage: HTMLElement | null = null;
 	currentStreamingText: string = '';
 
-	constructor(leaf: WorkspaceLeaf, plugin: Plugin & { settings: PluginSettings }) {
+	constructor(leaf: WorkspaceLeaf, plugin: Plugin & { settings: PluginSettings } & StatusBarUpdater) {
 		super(leaf);
 		this.plugin = plugin;
 	}
@@ -212,7 +212,8 @@ export class SimpleSidebarView extends ItemView {
 		this.indexingManager = new IndexingManager(
 			this.app,
 			this.apiClient,
-			this.app.vault.getName()
+			this.app.vault.getName(),
+			this.plugin
 		);
 
 		this.sessionManager = new SessionManager(
@@ -250,7 +251,8 @@ export class SimpleSidebarView extends ItemView {
 			this.indexingManager = new IndexingManager(
 				this.app,
 				this.apiClient,
-				this.app.vault.getName()
+				this.app.vault.getName(),
+				this.plugin
 			);
 
 			// Update session manager with new API client

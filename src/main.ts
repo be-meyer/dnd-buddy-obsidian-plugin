@@ -5,9 +5,14 @@ import { SettingTab } from './settings';
 
 export default class SimpleSidebarPlugin extends Plugin {
 	settings: PluginSettings;
+	statusBarEl: HTMLElement | null = null;
 
 	async onload() {
 		await this.loadSettings();
+
+		// Add status bar item for indexing progress
+		this.statusBarEl = this.addStatusBarItem();
+		this.statusBarEl.addClass('dnd-buddy-status');
 
 		this.registerView(
 			VIEW_TYPE_SIDEBAR,
@@ -32,6 +37,18 @@ export default class SimpleSidebarPlugin extends Plugin {
 		this.app.workspace.onLayoutReady(() => {
 			this.activateView();
 		});
+	}
+
+	updateStatusBar(text: string) {
+		if (this.statusBarEl) {
+			this.statusBarEl.setText(text);
+		}
+	}
+
+	clearStatusBar() {
+		if (this.statusBarEl) {
+			this.statusBarEl.setText('');
+		}
 	}
 
 	async activateView() {
