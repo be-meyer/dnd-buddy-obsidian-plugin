@@ -67,16 +67,12 @@ export class IndexingManager {
 			const totalFiles = markdownFiles.length;
 			new Notice(`Starting to index ${totalFiles} files...`);
 			
+			let completedCount = 0;
 			let successCount = 0;
 			let errorCount = 0;
-			const errors: string[] = [];
-			
-			for (let i = 0; i < markdownFiles.length; i++) {
-				const file = markdownFiles[i];
-				
-				// Update status bar with progress
-				this.statusBarUpdater?.updateStatusBar(`Indexing ${i + 1}/${totalFiles}`);
-				
+			const CONCURRENCY = 5;
+
+			const indexFile = async (file: ReturnType<typeof this.app.vault.getMarkdownFiles>[0]): Promise<void> => {
 				try {
 					const content = await this.app.vault.read(file);
 					
@@ -93,17 +89,21 @@ export class IndexingManager {
 						console.log(`Indexed ${file.name}: ${response.chunksProcessed} chunks`);
 					} else {
 						errorCount++;
-						errors.push(file.name);
 					}
-					
-					await new Promise(resolve => setTimeout(resolve, 100));
-					
 				} catch (error) {
 					console.error(`Failed to index ${file.name}:`, error);
 					errorCount++;
-					errors.push(file.name);
 					new Notice(`✗ Error indexing: ${file.name}`, 3000);
+				} finally {
+					completedCount++;
+					this.statusBarUpdater?.updateStatusBar(`Indexing ${completedCount}/${totalFiles}`);
 				}
+			};
+
+			// Process files in batches of CONCURRENCY
+			for (let i = 0; i < markdownFiles.length; i += CONCURRENCY) {
+				const batch = markdownFiles.slice(i, i + CONCURRENCY);
+				await Promise.all(batch.map(indexFile));
 			}
 			
 			// Clear status bar
